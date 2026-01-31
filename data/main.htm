@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>ЭКРАН Yss</title>
+    <meta name="description" content="Версия 0.2">
+    <meta name="author" content="Yss">
+	<link href="/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
+	<script type="text/javascript" src="/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.min.js"></script>
+	<script type="text/javascript" src="/js/timepicker.min.js"></script>
+	
+</head>
+<body style="background-color:#d9ffb3;">
+	<nav class="navbar navbar-light bg-light navbar-expand-lg">
+		<div class="container-fluid">
+			<a class="navbar-brand" href="#">Управление экраном</a>
+		<ul class="nav nav-pills">
+			<li class="nav-item">
+			  <a class="nav-link" href="/">Home</a>
+			</li>
+			<li class="nav-item">
+			  <a class="nav-link active"  aria-current="page" href="#">Main</a>
+			</li>
+			<li class="nav-item">
+			  <a class="nav-link" href="/upd.htm">Update</a>
+			</li>
+			<li class="nav-item">
+			  <a class="nav-link" href="/log.htm">Log</a>
+			</li>
+			<li class="nav-item">
+			  <a class="nav-link" href="/reboot">Reboot</a>
+			</li>
+		  </ul>
+		  </div>
+		</nav>
+		
+		
+		
+		<div class="panel panel-default col-md-offset-1 col-md-10">
+			
+			<div class="panel-body">		
+				
+				
+
+	
+
+			
+
+				<div class="col-md-4" id="LOGSHOW">
+						
+				</div>
+
+				<div class ="col-md-4">	
+					<form>
+			    	<div class="input-group mb-3">			
+						<a type="button" class="btn btn-lg btn-success" id="BTN1"><i class="fa fa-bed fa-2x pull-left">Screen UP</i></a>
+					</div>
+
+					<div class="input-group mb-3">			
+						<a type="button" class="btn btn-lg btn-success" id="BTN2"><i class="fa fa-bed fa-2x pull-left">Stop!</i></a>
+					</div>
+
+					<div class="input-group mb-3">			
+						<a type="button" class="btn btn-lg btn-success" id="BTN3"><i class="fa fa-bed fa-2x pull-left">Screen DOWN</i></a>
+					</div>
+	`			</form>
+				</div>
+
+
+
+				<div class="col-md-4">
+					<form>
+						<h2>2. Customs Radios</h2>
+
+						<div class="form-button">
+							<a type="button" class="btn btn-lg btn-success" id="DEVICES" onclick="getI2CDevs()"><i class="fa fa-bed fa-2x pull-left">I2C Devices</i></a>
+						</div>
+
+						<div class="alert alert-success" role="alert" id="DEVSHOW" ></div>
+							
+						<div class="form-button">
+							<a type="button" class="btn btn-lg btn-success" id="FUNC1"><i class="fa fa-bed fa-2x pull-left">FUNCTION-1</i></a>
+						</div>
+
+						<div class="form-check">
+							<label>
+								<input type="radio" name="radio" checked> <span class="label-text">Option 01</span>
+							</label>
+						</div>
+						<div class="form-check">
+							<label>
+								<input type="radio" name="radio"> <span class="label-text">Option 02</span>
+							</label>
+						</div>
+						<div class="form-check">
+							<label>
+								<input type="radio" name="radio"> <span class="label-text">Option 03</span>
+							</label>
+						</div>
+						<div class="form-check">
+							<label>
+								<input type="radio" name="radio" disabled> <span class="label-text">Option 04</span>
+							</label>
+						</div>
+					</form>
+				</div>
+				<div class="col-md-4">
+					<form>
+						<h2>3.Radios Toggles</h2>
+						<div class="form-check">
+							<label class="toggle">
+								<input type="radio" name="toggle" checked> <span class="label-text">Option 01</span>
+							</label>
+						</div>
+						<div class="form-check">
+							<label class="toggle">
+								<input type="radio" name="toggle"> <span class="label-text">Option 02</span>
+							</label>
+						</div>
+						<div class="form-check">
+							<label class="toggle">
+								<input type="radio" name="toggle"> <span class="label-text">Option 03</span>
+							</label>
+						</div>
+						<div class="form-check">
+							<label class="toggle">
+								<input type="radio" name="toggle" disabled> <span class="label-text">Option 04</span>
+							</label>
+						</div>
+						
+					</form>
+				</div>
+			</div>
+		</div>
+	
+ 
+ <script type="text/javascript">
+	$(document).ready(function(){
+	process();
+
+	$('#BTN1').on('click',function(){  
+			$.ajax({  
+                    type: "POST",  
+                    url: "/post",  
+                    data: "page=main&BTN1=1",  
+                    success: function(html){  
+                    }  
+			}); 
+                return false;  
+            });  
+	$('#BTN2').on('click',function(){  
+			$.ajax({  
+                    type: "POST",  
+                    url: "/post",  
+                    data: "page=main&BTN2=1",  
+                    success: function(html){  
+                    }  
+			}); 
+                return false;  
+            });  			
+	$('#BTN3').on('click',function(){  
+			$.ajax({  
+                    type: "POST",  
+                    url: "/post",  
+                    data: "page=main&BTN3=1",  
+                    success: function(html){  
+                    }  
+			}); 
+                return false;  
+            });  		
+			
+	$('#FUNC1').on('click',function(){  
+			$.ajax({  
+                    type: "POST",  
+                    url: "/post",  
+                    data: "page=main&FUNC1=true",  
+                    success: function(html){  
+                    }  
+			}); 
+                return false;  
+			});  
+	});
+	
+	
+
+
+	function process(){
+		$.getJSON(
+		"/getdata",
+		{page:"main"},
+		function(data){
+			$('#REL1').prop('checked', data['REL1']==1);
+			$('#REL2').prop('checked', data['REL2']==1);
+			$('#REL3').prop('checked', data['REL3']==1);
+			$('#REL4').prop('checked', data['REL4']==1);
+			$('#LIGHT_CW').prop('value', data['LIGHT_CW']);
+			$('#LIGHT_NW').prop('value', data['LIGHT_NW']);
+			$('#LIGHT_WW').prop('value', data['LIGHT_WW']);
+			$('#LOGSHOW').html("LOG HERE:"+JSON.stringify(data,null,'<br>'));
+			
+
+		});
+		setTimeout('process()',2000);
+	}
+
+	function getI2CDevs(){
+		$.getJSON(
+		"/getdata",
+		{page:"main1"},
+		function(data){
+			$('#DEVSHOW').html(data['DEVSHOW']);
+    	});
+	}
+
+	</script>
+	</body>
+</html>

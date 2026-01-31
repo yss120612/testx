@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Voice monitor</title>
+    <meta name="description" content="Версия 0.1">
+    <meta name="author" content="Yss">
+    <link href="/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
+    <script type="text/javascript" src="/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+</head>
+<body>
+	<nav class="navbar navbar-light bg-light navbar-expand-lg">
+		<div class="container-fluid">
+			
+		<ul class="nav nav-pills">
+			<li class="nav-item">
+			  <a class="nav-link" href="/">Home</a>
+			</li>
+			<li class="nav-item">
+			  <a class="nav-link" href="/main.htm">Main</a>
+			</li>
+			<li class="nav-item">
+			  <a class="nav-link" href="/upd.htm">Update</a>
+			</li>
+			<li class="nav-item">
+			  <a class="nav-link" href="/reboot">Reboot</a>
+			</li>
+		  </ul>
+		  </div>
+		</nav>
+	<div class="container-fluid">
+	
+	<div class="row">
+			<div class="col-md-offset-1 col-md-10">
+			<input type="text" id ="FORCOMMAND" />	
+			<input type="button" id="B1" class="btn btn-success" value="Send" onclick="sendcommand()"/>
+			<input type="button" id="B2" class="btn btn-success" value="Clear" onclick="clr()"/>
+			</div>
+
+		<div class="col-md-offset-1 col-md-10">
+			<h5 id="SHOWCOMMAND"></h5>
+			<h5>Ответ модуля</h5>
+			<textarea id="TEXTAREA1"></textarea>	
+		</div>
+	</div>
+	</div>
+ </body>
+ <script type="text/javascript">
+	$(document).ready(function(){
+	process();
+	});
+	
+	function process(){
+		$.getJSON(
+		"/getdata",
+		{page:'log'},
+		function(data){
+			
+		if (data['changed']=='1'){	
+				$("#TEXTAREA1").val($.trim($("#TEXTAREA1").val() + '\n' + data['logdata']));
+				
+			}
+		});
+		setTimeout('process()',1000);
+	}
+
+	function sendcommand(){
+		$.ajax({  
+                    type: "POST",  
+                    url: "/post",  
+                    data: "page=log&VCOMMAND="+$("#FORCOMMAND").val(),  
+                    success: function(html){  
+						$("#SHOWCOMMAND").html($("#FORCOMMAND").val());
+						$("#FORCOMMAND").val("");
+                    }  
+			}); 
+		
+	}
+
+	function clr(){
+	
+		$("#TEXTAREA1").val('');
+		$("#SHOWCOMMAND").html('');
+	}
+	</script>
+</html>

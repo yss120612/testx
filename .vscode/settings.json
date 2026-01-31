@@ -1,0 +1,35 @@
+{
+  "C_Cpp.intelliSenseEngine": "default",
+  "idf.espIdfPath": "/home/yss1/esp-idf",
+  "idf.pythonInstallPath": "/home/yss1/.espressif/python_env/idf5.5_py3.12_env/bin/python",
+  "idf.openOcdConfigs": [
+    "board/esp32c6-builtin.cfg"
+  ],
+  "idf.port": "/dev/ttyACM0",
+  "idf.toolsPath": "/home/yss1/.espressif",
+  "idf.customExtraVars": {
+    "ESP_MATTER_PATH": "/home/yss1/esp-matter",
+    "IDF_TARGET": "esp32c6"
+  },
+  "clangd.path": "/home/yss1/.espressif/tools/esp-clang/esp-19.1.2_20250312/esp-clang/bin/clangd",
+  "clangd.arguments": [
+    "--background-index",
+    "--query-driver=/home/yss1/.espressif/tools/riscv32-esp-elf/esp-14.2.0_20251107/riscv32-esp-elf/bin/riscv32-esp-elf-gcc",
+    "--compile-commands-dir=/home/yss1/projects/screen/build"
+  ],
+  "idf.flashType": "UART",
+  "files.associations": {
+    "globalsettings.h": "c",
+    "format": "cpp",
+    "thread": "cpp",
+    "cstring": "cpp",
+    "bitset": "cpp",
+    "random": "cpp",
+    "fstream": "cpp",
+    "future": "cpp",
+    "istream": "cpp",
+    "sstream": "cpp",
+    "regex": "cpp",
+    "string_view": "cpp"
+  }
+}
