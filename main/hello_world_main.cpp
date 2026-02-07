@@ -25,7 +25,9 @@
 #include "SpeakerTask.h"
 #include "ButtonTask.h"
 #include "RX433Task.h"
+#include "TX433Task.h"
 #include "ENS160Task.h"
+#include "DISPTask.h"
 #include <esp_log.h>
 #include "driver/rmt_tx.h"
 
@@ -53,15 +55,16 @@
 
 #define GPIO_SPEAKER GPIO_NUM_2
 
-#define GPIO_ENPIONT_SUPPLY GPIO_NUM_5
-#define GPIO_ENPIONT_DATA GPIO_NUM_4
+//#define GPIO_ENPIONT_SUPPLY GPIO_NUM_5
+//#define GPIO_ENPIONT_DATA GPIO_NUM_4
 
 #define GPIO_RX433 GPIO_NUM_9
+#define GPIO_TX433 GPIO_NUM_4
 
 #define GPIO_BUTTON GPIO_NUM_14                                                                                                                               
 
-#define GPIO_SCL GPIO_NUM_7
-#define GPIO_SDA GPIO_NUM_6      
+#define GPIO_SCL GPIO_NUM_6
+#define GPIO_SDA GPIO_NUM_7      
 
 //ESP32 pins
 // #define GPIO_MOTOR_UP GPIO_NUM_33                                                                                                                      
@@ -85,8 +88,11 @@ HTTPServer * http;
 SpeakerTask *speaker;
 ButtonTask *button;
 RX433Task * rx433;
+TX433Task * tx433;
 ENS160Task * ens160;
+Display * display;
 
+i2c_master_bus_handle_t bus_handle;
 bool repair_mode;
 TickType_t ticks;
 
@@ -194,7 +200,7 @@ void rx433_event(yss_event_t event){
         }
         break;
         default:
-          ESP_LOGW("RX433","DATA=%d LENGTH=%d PROTOCOL=%d",event.data,event.count,event.button);  
+          ESP_LOGW("RX433","DATA=%d (%d) LENGTH=%d PROTOCOL=%d",event.data,event.data<<1 | 0x1 ,event.count,event.button);  
         break;
     }
 
@@ -308,13 +314,29 @@ void app_main(void)
     
 led_init();
 repair_mode=false;
-    queue= xQueueCreate(QUEUE_LENGTH,sizeof(yss_event_t));
-    flags=xEventGroupCreate();
-    xEventGroupClearBits(flags,0xFFFF);
+queue= xQueueCreate(QUEUE_LENGTH,sizeof(yss_event_t));
+flags=xEventGroupCreate();
+xEventGroupClearBits(flags,0xFFFF);
     /* Print chip information */
-    esp_chip_info_t chip_info;
-    uint32_t flash_size;
-    esp_chip_info(&chip_info);
+esp_chip_info_t chip_info;
+uint32_t flash_size;
+esp_chip_info(&chip_info);
+
+    // Настройка и запуск шины I2C #0
+i2c_master_bus_config_t i2c_master_config;
+i2c_master_config.clk_source = I2C_CLK_SRC_DEFAULT; // Источник синхронизации для шины
+i2c_master_config.i2c_port = I2C_NUM_0;   
+i2c_master_config.scl_io_num=GPIO_SCL;
+i2c_master_config.sda_io_num=GPIO_SDA;
+i2c_master_config.flags.enable_internal_pullup = 1; // Использовать встроенную подтяжку GPIO
+i2c_master_config.glitch_ignore_cnt = 7;            // Период сбоя данных на шине, стандартное значение 7
+i2c_master_config.intr_priority = 0;                // Приоритет прерывания: авто
+i2c_master_config.trans_queue_depth = 0;            // Глубина внутренней очереди. Действительно только при асинхронной передач
+i2c_new_master_bus(&i2c_master_config, &bus_handle); 
+
+//display = new Display(&bus_handle);
+//display->setup("Privet!");
+
     vTaskDelay(pdMS_TO_TICKS(1000));       
     wifi=new WiFiTask("WiFi",4096,queue,flags);
     wifi->run();
@@ -335,10 +357,10 @@ repair_mode=false;
      http->run();
      http->resume();
     
-    vTaskDelay(pdMS_TO_TICKS(1000));       
-    endpoint= new EndpointTask("Endpoints", 1024+256, queue, GPIO_ENPIONT_DATA, GPIO_ENPIONT_SUPPLY);
-    endpoint->run();
-    endpoint->resume();
+    // vTaskDelay(pdMS_TO_TICKS(1000));       
+    // endpoint= new EndpointTask("Endpoints", 1024+256, queue, GPIO_ENPIONT_DATA, GPIO_ENPIONT_SUPPLY);
+    // endpoint->run();
+    // endpoint->resume();
 
      vTaskDelay(pdMS_TO_TICKS(1000));       
     speaker= new SpeakerTask("Speaker", 1024*3, queue, GPIO_SPEAKER);
@@ -356,17 +378,16 @@ repair_mode=false;
     rx433->run();
     rx433->resume();
 
-
     vTaskDelay(pdMS_TO_TICKS(1000));       
-    ens160= new ENS160Task("ens160", 1024*2, queue);
-    ens160->run();
-    ens160->resume();
+    tx433= new TX433Task("tx433", 1024*2, queue, GPIO_TX433);
+    tx433->run();
+    tx433->resume();
+
 
     // vTaskDelay(pdMS_TO_TICKS(1000));       
-    // ens= new ENS160Task("ens160", 3*1024, queue);
-    // ens->resume();
-
-
+    // ens160= new ENS160Task("ens160", 1024*2, queue, &bus_handle);
+    // ens160->run();
+    // ens160->resume();
     
     printf("This is %s chip with %d CPU core(s), %s%s%s%s, ",
            CONFIG_IDF_TARGET,

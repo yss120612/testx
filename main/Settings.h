@@ -60,7 +60,8 @@ enum notify_title_t : uint8_t
 	ENDPOINT_TRIPPED,
 	MELODY1_START,
 	MELODY2_START,
-	MELODY_STOP
+	MELODY_STOP,
+	TRANSMIT_NOW
 };
 
 static void reset_default(SystemState_t * ss){

@@ -60,13 +60,9 @@ esp_err_t SpeakerTask::setVolume(uint8_t v)
     return ledc_update_duty(SPEED,CHANNEL);
 }
 
-// uint16_t melody[] = { NOTE_E5, NOTE_D5, NOTE_F4, NOTE_G4, NOTE_C5, NOTE_B4, NOTE_D4, NOTE_E4, NOTE_B4, NOTE_A4, NOTE_C4, NOTE_E4, NOTE_A4 };
-// uint8_t noteDurations[] = { 8, 8, 4, 4, 8, 8, 4, 4, 8, 8, 4, 4, 1 };
-
 int16_t melody1[] = {
  // Fur Elise - Ludwig van Beethovem
   // Score available at https://musescore.com/user/28149610/scores/5281944
-
   //starts from 1 ending on 9
   NOTE_E5, 16, NOTE_DS5, 16, //1
   NOTE_E5, 16, NOTE_DS5, 16, NOTE_E5, 16, NOTE_B4, 16, NOTE_D5, 16, NOTE_C5, 16,
@@ -175,25 +171,6 @@ current_note=0;
 melody=mld;
 ESP_LOGE("SPK","melody=%d",len);
 ledc_timer_resume(SPEED,TIMER_NO);
-//int noteDuration; 
-//int16_t divider;
-//if (continuePlay){
-// for (int thisNote = 0; thisNote < melody_length; thisNote = thisNote + 2) {
- 
-//     // // calculates the duration of each note
-//     // divider = melody[thisNote + 1];
-//     // noteDuration = (wholenote) / abs(divider);
-//     // if (divider > 0) {
-//     //   // regular note, just proceed
-//     // } else if (divider < 0) {
-//     //   // dotted notes are represented with negative durations!!
-//     //   noteDuration *= 1.5; // increases the duration in half for dotted notes
-//     // }
-//    playNote(melody[thisNote],melody[thisNote]);
-//   //}
-//   //continuePlay=false;
-// }
- 
 }
 
 void SpeakerTask::stop_melody(){

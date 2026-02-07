@@ -13,4 +13,4 @@ idf_build_set_property(C_COMPILE_OPTIONS "-Os" APPEND)
 # flags that depend on -Wformat
 idf_build_set_property(COMPILE_OPTIONS "-Wno-format-nonliteral;-Wno-format-security" APPEND)
 
-spiffs_create_partition_image("spiffs" "data" FLASH_IN_PROJECT)
+#spiffs_create_partition_image("spiffs" "data" FLASH_IN_PROJECT)
